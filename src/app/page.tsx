@@ -137,11 +137,11 @@ export default function Home() {
           {" "}• Deployed on Solana Devnet
         </p>
         <p className="footer-links">
-          <a href="/docs/01-passkey-wallet-creation.md">Tutorial 1: Passkey Wallet</a>
+          <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/01-passkey-wallet-creation.md" target="_blank" rel="noopener noreferrer">Tutorial 1: Passkey Wallet</a>
           {" • "}
-          <a href="/docs/02-gasless-transactions.md">Tutorial 2: Gasless TX</a>
+          <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/02-gasless-transactions.md" target="_blank" rel="noopener noreferrer">Tutorial 2: Gasless TX</a>
           {" • "}
-          <a href="/docs/03-session-persistence.md">Tutorial 3: Sessions</a>
+          <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/03-session-persistence.md" target="_blank" rel="noopener noreferrer">Tutorial 3: Sessions</a>
         </p>
       </footer>
     </div>

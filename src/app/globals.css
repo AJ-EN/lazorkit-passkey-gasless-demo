@@ -42,6 +42,9 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   line-height: 1.6;
+  /* Smooth font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ========================================
@@ -164,6 +167,14 @@ body {
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1rem;
+  /* Smooth transitions and subtle shadow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  border-color: #3A3A3A;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .card h2 {
@@ -198,10 +209,18 @@ body {
 .btn-primary {
   background: var(--solana-purple);
   color: white;
+  /* Subtle glow effect */
+  box-shadow: 0 2px 8px rgba(153, 69, 255, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: #8035E0;
+  box-shadow: 0 4px 16px rgba(153, 69, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-secondary {
@@ -251,11 +270,14 @@ body {
   color: var(--foreground);
   font-size: 1rem;
   font-family: inherit;
+  /* Smooth focus transition */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input:focus {
   outline: none;
   border-color: var(--solana-purple);
+  box-shadow: 0 0 0 3px rgba(153, 69, 255, 0.15);
 }
 
 .input::placeholder {
@@ -421,6 +443,15 @@ select.input {
   background: rgba(20, 241, 149, 0.1);
   border: 1px solid var(--success);
   border-radius: 8px;
+  /* Subtle glow animation on success */
+  box-shadow: 0 0 12px rgba(20, 241, 149, 0.2);
+  animation: successPulse 2s ease-in-out;
+}
+
+@keyframes successPulse {
+  0% { box-shadow: 0 0 0 rgba(20, 241, 149, 0); }
+  50% { box-shadow: 0 0 20px rgba(20, 241, 149, 0.3); }
+  100% { box-shadow: 0 0 12px rgba(20, 241, 149, 0.2); }
 }
 
 .success-message p {
