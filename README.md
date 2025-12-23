@@ -2,10 +2,13 @@
 
 > **The future of Solana UX: No seed phrases. No browser extensions. Just your fingerprint.**
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-000?logo=vercel)](https://lazorkit-passkey-gasless-demo-beta.vercel.app/)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/AJ-EN/lazorkit-passkey-gasless-demo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Next.js](https://img.shields.io/badge/Next.js-16.1-black)](https://nextjs.org/)
 [![LazorKit](https://img.shields.io/badge/LazorKit-SDK-9945FF)](https://lazorkit.com)
+
+**🌐 [Live Demo →](https://lazorkit-passkey-gasless-demo-beta.vercel.app/)**
 
 A production-ready starter template demonstrating **passkey authentication** and **gasless transactions** on Solana using the [LazorKit SDK](https://lazorkit.com). Perfect for developers looking to build Web3 apps with Web2-like UX.
 
