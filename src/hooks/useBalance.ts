@@ -95,7 +95,9 @@ export function useBalance(publicKey: PublicKey | null) {
 
     // Fetch on mount and when publicKey changes
     useEffect(() => {
-        fetchBalances();
+        void (async () => {
+            await fetchBalances();
+        })();
     }, [fetchBalances]);
 
     return {
