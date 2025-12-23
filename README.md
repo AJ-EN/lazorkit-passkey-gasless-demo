@@ -97,13 +97,15 @@ lazorkit-passkey-gasless-demo/
 │   │   ├── send-tokens.tsx      # SOL & USDC transfer with gasless TX
 │   │   └── sign-message.tsx     # Message signing (advanced)
 │   ├── hooks/
-│   │   └── useTypedWallet.ts   # Type-safe wrapper for LazorKit SDK
+│   │   ├── useTypedWallet.ts   # Type-safe wrapper for LazorKit SDK
+│   │   └── useBalance.ts       # SOL/USDC balance fetching
 │   └── images/
 │       └── *.png               # Demo screenshots
 ├── docs/
 │   ├── 01-passkey-wallet-creation.md   # Tutorial 1
 │   ├── 02-gasless-transactions.md      # Tutorial 2
-│   └── 03-session-persistence.md       # Tutorial 3
+│   ├── 03-session-persistence.md       # Tutorial 3
+│   └── 04-deploy-to-mainnet.md         # Tutorial 4
 ├── .env.example                # Environment variables template
 ├── README.md
 └── package.json
@@ -141,6 +143,7 @@ Step-by-step guides to understanding the implementation:
 | [1. Passkey Wallet Creation](docs/01-passkey-wallet-creation.md) | How WebAuthn passkeys replace seed phrases |
 | [2. Gasless Transactions](docs/02-gasless-transactions.md) | How the Paymaster covers gas fees |
 | [3. Session Persistence](docs/03-session-persistence.md) | How sessions work across refreshes and devices |
+| [4. Deploy to Mainnet](docs/04-deploy-to-mainnet.md) | Production deployment and considerations |
 
 ---
 

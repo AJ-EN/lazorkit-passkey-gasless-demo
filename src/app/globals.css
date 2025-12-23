@@ -358,6 +358,64 @@ select.input {
   text-decoration: underline;
 }
 
+/* Balance Display */
+.balance-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(153, 69, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(153, 69, 255, 0.1);
+}
+
+.balance-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.balance-row:not(:last-child) {
+  border-bottom: 1px solid var(--card-border);
+}
+
+.balance-label {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.balance-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.balance-value.usdc {
+  color: var(--solana-green);
+}
+
+.btn-refresh {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: var(--card-border);
+  color: var(--foreground);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ========================================
    Send Tokens Component
    ======================================== */

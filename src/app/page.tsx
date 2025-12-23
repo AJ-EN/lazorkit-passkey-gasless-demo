@@ -1,9 +1,11 @@
 "use client";
 
 import { useWallet } from "@lazorkit/wallet";
+import { PublicKey } from "@solana/web3.js";
 import { ConnectWallet } from "@/components/connect-wallet";
 import { SendTokens } from "@/components/send-tokens";
 import { SignMessage } from "@/components/sign-message";
+import { useBalance } from "@/hooks/useBalance";
 
 /**
  * LazorKit Demo - Main Page
@@ -15,6 +17,10 @@ import { SignMessage } from "@/components/sign-message";
  */
 export default function Home() {
   const { isConnected, wallet } = useWallet();
+
+  // Get wallet public key for balance fetching
+  const walletPubkey = wallet?.smartWallet ? new PublicKey(wallet.smartWallet) : null;
+  const { solBalance, usdcBalance, isLoading: balanceLoading, refresh: refreshBalance } = useBalance(walletPubkey);
 
   return (
     <div className="app">
@@ -80,6 +86,31 @@ export default function Home() {
                   📋
                 </button>
               </div>
+
+              {/* Balance Display */}
+              <div className="balance-section">
+                <div className="balance-row">
+                  <span className="balance-label">SOL Balance:</span>
+                  <span className="balance-value">
+                    {balanceLoading ? "..." : solBalance !== null ? `${solBalance.toFixed(4)} SOL` : "--"}
+                  </span>
+                </div>
+                <div className="balance-row">
+                  <span className="balance-label">USDC Balance:</span>
+                  <span className="balance-value usdc">
+                    {balanceLoading ? "..." : usdcBalance !== null ? `${usdcBalance.toFixed(2)} USDC` : "--"}
+                  </span>
+                </div>
+                <button
+                  onClick={refreshBalance}
+                  className="btn-refresh"
+                  disabled={balanceLoading}
+                  title="Refresh balances"
+                >
+                  🔄 {balanceLoading ? "Loading..." : "Refresh"}
+                </button>
+              </div>
+
               <a
                 href={`https://explorer.solana.com/address/${wallet.smartWallet}?cluster=devnet`}
                 target="_blank"
@@ -137,11 +168,13 @@ export default function Home() {
           {" "}• Deployed on Solana Devnet
         </p>
         <p className="footer-links">
-          <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/01-passkey-wallet-creation.md" target="_blank" rel="noopener noreferrer">Tutorial 1: Passkey Wallet</a>
+          <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/01-passkey-wallet-creation.md" target="_blank" rel="noopener noreferrer">Tutorial 1: Passkey</a>
           {" • "}
           <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/02-gasless-transactions.md" target="_blank" rel="noopener noreferrer">Tutorial 2: Gasless TX</a>
           {" • "}
           <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/03-session-persistence.md" target="_blank" rel="noopener noreferrer">Tutorial 3: Sessions</a>
+          {" • "}
+          <a href="https://github.com/AJ-EN/lazorkit-passkey-gasless-demo/blob/main/docs/04-deploy-to-mainnet.md" target="_blank" rel="noopener noreferrer">Tutorial 4: Mainnet</a>
         </p>
       </footer>
     </div>
