@@ -15,7 +15,10 @@ import { useState } from "react";
  * ```
  */
 export function SignMessage() {
-    const { signMessage, isConnected } = useWallet();
+    // Type assertion needed - signMessage exists at runtime but types are incomplete
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wallet = useWallet() as any;
+    const { signMessage, isConnected } = wallet;
 
     const [message, setMessage] = useState("");
     const [signature, setSignature] = useState<string | null>(null);

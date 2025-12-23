@@ -9,7 +9,8 @@ A starter template demonstrating **passkey authentication** and **gasless transa
 ## ✨ Features
 
 - **Passkey Authentication** — Create and access wallets using FaceID, TouchID, or Windows Hello
-- **Gasless Transactions** — Send SOL without needing to hold any for gas fees
+- **Gasless Transactions** — Send SOL and USDC without needing native tokens for gas fees
+- **SPL Token Support** — Full USDC transfer support with automatic ATA creation
 - **Smart Wallet** — Programmable account abstraction via PDAs
 - **Session Persistence** — Stay connected across page refreshes
 
@@ -79,30 +80,27 @@ lazorkit-demo/
 
 ## 🔧 Configuration
 
-The SDK is pre-configured for **Solana Devnet**. See `src/app/providers.tsx`:
+The SDK uses environment variables for configuration. Copy `.env.example` to `.env.local`:
 
-```typescript
-const LAZORKIT_CONFIG = {
-  rpcUrl: "https://api.devnet.solana.com",
-  portalUrl: "https://portal.lazor.sh",
-  paymasterConfig: {
-    paymasterUrl: "https://kora.devnet.lazorkit.com",
-  },
-};
+```bash
+cp .env.example .env.local
 ```
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_SOLANA_RPC` | Solana RPC endpoint | `https://api.devnet.solana.com` |
+| `NEXT_PUBLIC_LAZORKIT_PORTAL` | LazorKit passkey portal | `https://portal.lazor.sh` |
+| `NEXT_PUBLIC_LAZORKIT_PAYMASTER` | Kora paymaster URL | `https://kora.devnet.lazorkit.com` |
 
 ### Switching to Mainnet
 
-To deploy on Mainnet, update the config:
+Update your `.env.local`:
 
-```typescript
-const LAZORKIT_CONFIG = {
-  rpcUrl: "https://api.mainnet-beta.solana.com",
-  portalUrl: "https://portal.lazor.sh",
-  paymasterConfig: {
-    paymasterUrl: "https://kora.mainnet.lazorkit.com",
-  },
-};
+```env
+NEXT_PUBLIC_SOLANA_RPC=https://api.mainnet-beta.solana.com
+NEXT_PUBLIC_LAZORKIT_PAYMASTER=https://kora.mainnet.lazorkit.com
 ```
 
 ---
@@ -134,6 +132,7 @@ Or use the [Solana Faucet](https://faucet.solana.com/).
 - [ ] Create new passkey wallet (first-time user)
 - [ ] Restore session on page refresh
 - [ ] Send 0.001 SOL to another address
+- [ ] Send USDC to another address (requires Devnet USDC)
 - [ ] View transaction on Solana Explorer
 - [ ] Sign an arbitrary message
 
@@ -151,6 +150,26 @@ Deploy to Vercel with one click:
 npm run build
 npm run start
 ```
+
+---
+
+## 🔧 Troubleshooting
+
+### "Passkey creation failed"
+
+**Solution:** Ensure your device has biometrics enabled (TouchID, FaceID, or Windows Hello). Passkeys require a secure context — use `https://` or `localhost`.
+
+### "Transaction failed" when sending USDC
+
+**Solution:** Make sure your smart wallet has Devnet USDC. You can get test USDC from the [Circle Devnet Faucet](https://faucet.circle.com/) or swap Devnet SOL for USDC on a DEX.
+
+### Buffer is not defined
+
+**Solution:** The app includes a Buffer polyfill in `providers.tsx`. If you see this error, ensure you're importing the providers correctly in your layout.
+
+### Wallet not connecting on mobile
+
+**Solution:** Some mobile browsers have limited WebAuthn support. Try using Safari on iOS or Chrome on Android.
 
 ---
 

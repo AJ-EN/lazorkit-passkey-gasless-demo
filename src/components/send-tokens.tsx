@@ -1,8 +1,18 @@
 "use client";
 
 import { useWallet } from "@lazorkit/wallet";
-import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { SystemProgram, PublicKey, LAMPORTS_PER_SOL, TransactionInstruction } from "@solana/web3.js";
+import {
+    getAssociatedTokenAddress,
+    createTransferInstruction,
+    createAssociatedTokenAccountIdempotentInstruction
+} from "@solana/spl-token";
 import { useState, useCallback } from "react";
+
+// Devnet USDC Mint Address
+const USDC_MINT = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
+// USDC has 6 decimals
+const USDC_DECIMALS = 6;
 
 type TokenType = "SOL" | "USDC";
 type TransactionStatus = "idle" | "pending" | "success" | "error";
@@ -93,9 +103,11 @@ export function SendTokens() {
                 });
 
                 // Sign and send via Paymaster (gasless)
+                // Note: Type assertion needed due to SDK type definition mismatch
                 const txSignature = await signAndSendTransaction({
                     instructions: [instruction],
-                });
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                } as any);
 
                 setSignature(txSignature);
                 setStatus("success");
@@ -105,15 +117,58 @@ export function SendTokens() {
                 setRecipient("");
 
             } else {
-                // USDC Transfer
-                // Note: For USDC, we use feeToken option to pay gas in USDC
-                // This requires the user to have USDC in their smart wallet
+                // USDC Transfer using SPL Token program
+                const recipientPubkey = new PublicKey(recipient);
 
-                // For demo purposes, we'll show how to set up USDC transfer
-                // In production, you'd use SPL Token program instructions
-                setError("USDC transfer requires SPL Token setup. See tutorial for details.");
-                setStatus("idle");
-                return;
+                // Get the sender's Associated Token Account (ATA)
+                const sourceAccount = await getAssociatedTokenAddress(
+                    USDC_MINT,
+                    smartWalletPubkey
+                );
+
+                // Get the recipient's Associated Token Account (ATA)
+                const destinationAccount = await getAssociatedTokenAddress(
+                    USDC_MINT,
+                    recipientPubkey
+                );
+
+                // Create instructions array
+                const instructions: TransactionInstruction[] = [];
+
+                // Create destination ATA if it doesn't exist (idempotent - safe to call even if exists)
+                const createAtaInstruction = createAssociatedTokenAccountIdempotentInstruction(
+                    smartWalletPubkey, // payer (will be paid by paymaster)
+                    destinationAccount, // ata
+                    recipientPubkey, // owner
+                    USDC_MINT // mint
+                );
+                instructions.push(createAtaInstruction);
+
+                // Convert amount to USDC base units (6 decimals)
+                const amountBigInt = BigInt(Math.floor(parseFloat(amount) * Math.pow(10, USDC_DECIMALS)));
+
+                // Create the transfer instruction
+                const transferInstruction = createTransferInstruction(
+                    sourceAccount,
+                    destinationAccount,
+                    smartWalletPubkey,
+                    amountBigInt
+                );
+                instructions.push(transferInstruction);
+
+                // Sign and send via Paymaster (gasless)
+                // Note: Type assertion needed due to SDK type definition mismatch
+                const txSignature = await signAndSendTransaction({
+                    instructions,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                } as any);
+
+                setSignature(txSignature);
+                setStatus("success");
+
+                // Reset form on success
+                setAmount("");
+                setRecipient("");
             }
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "Transaction failed";
@@ -147,7 +202,7 @@ export function SendTokens() {
                     disabled={status === "pending"}
                 >
                     <option value="SOL">SOL</option>
-                    <option value="USDC">USDC (Coming Soon)</option>
+                    <option value="USDC">USDC (Devnet)</option>
                 </select>
             </div>
 
