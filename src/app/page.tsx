@@ -1,65 +1,149 @@
-import Image from "next/image";
+"use client";
 
+import { useWallet } from "@lazorkit/wallet";
+import { ConnectWallet } from "@/components/connect-wallet";
+import { SendTokens } from "@/components/send-tokens";
+import { SignMessage } from "@/components/sign-message";
+
+/**
+ * LazorKit Demo - Main Page
+ * 
+ * Demonstrates the core features of LazorKit SDK:
+ * 1. Passkey-based wallet creation
+ * 2. Gasless token transfers via Paymaster
+ * 3. Message signing with passkeys
+ */
 export default function Home() {
+  const { isConnected, wallet } = useWallet();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="app">
+      {/* Header */}
+      <header className="header">
+        <div className="logo">
+          <span className="logo-icon">🔐</span>
+          <span className="logo-text">LazorKit Demo</span>
+        </div>
+        <nav className="nav-links">
+          <a
+            href="https://docs.lazorkit.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Docs
+          </a>
+          <a
+            href="https://github.com/lazor-kit/lazor-kit"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+        </nav>
+      </header>
+
+      {/* Main Content */}
+      <main className="main">
+        {/* Hero Section */}
+        <section className="hero">
+          <h1>Passkey Smart Wallet for Solana</h1>
+          <p className="tagline">
+            No seed phrases. No extensions. Just your fingerprint.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+          {/* Feature badges */}
+          <div className="features">
+            <span className="feature-badge">🔐 Passkey Auth</span>
+            <span className="feature-badge">⛽ Gasless TX</span>
+            <span className="feature-badge">🏦 Smart Wallet</span>
+          </div>
+        </section>
+
+        {/* Wallet Section */}
+        <section className="card wallet-section">
+          <ConnectWallet />
+        </section>
+
+        {/* Connected State: Show Dashboard */}
+        {isConnected && wallet && (
+          <>
+            {/* Wallet Info Card */}
+            <section className="card wallet-info-card">
+              <h2>Your Smart Wallet</h2>
+              <div className="wallet-address-full">
+                <code>{wallet.smartWallet}</code>
+                <button
+                  onClick={() => navigator.clipboard.writeText(wallet.smartWallet)}
+                  className="btn-copy"
+                  title="Copy address"
+                >
+                  📋
+                </button>
+              </div>
+              <a
+                href={`https://explorer.solana.com/address/${wallet.smartWallet}?cluster=devnet`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="explorer-link"
+              >
+                View on Explorer →
+              </a>
+            </section>
+
+            {/* Send Tokens Card */}
+            <section className="card">
+              <SendTokens />
+            </section>
+
+            {/* Sign Message (Advanced) */}
+            <section className="card">
+              <SignMessage />
+            </section>
+          </>
+        )}
+
+        {/* Not Connected: Show Info */}
+        {!isConnected && (
+          <section className="info-section">
+            <h2>How It Works</h2>
+            <div className="steps">
+              <div className="step">
+                <span className="step-number">1</span>
+                <h3>Connect with Passkey</h3>
+                <p>Use FaceID, TouchID, or Windows Hello to create or access your wallet.</p>
+              </div>
+              <div className="step">
+                <span className="step-number">2</span>
+                <h3>Send Gasless Transactions</h3>
+                <p>Transfer SOL without needing to hold any for gas fees.</p>
+              </div>
+              <div className="step">
+                <span className="step-number">3</span>
+                <h3>Session Persists</h3>
+                <p>Your session is saved. Come back anytime without re-authenticating.</p>
+              </div>
+            </div>
+          </section>
+        )}
       </main>
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>
+          Built with{" "}
+          <a href="https://lazorkit.com" target="_blank" rel="noopener noreferrer">
+            LazorKit
+          </a>
+          {" "}• Deployed on Solana Devnet
+        </p>
+        <p className="footer-links">
+          <a href="/docs/01-passkey-wallet-creation.md">Tutorial 1: Passkey Wallet</a>
+          {" • "}
+          <a href="/docs/02-gasless-transactions.md">Tutorial 2: Gasless TX</a>
+          {" • "}
+          <a href="/docs/03-session-persistence.md">Tutorial 3: Sessions</a>
+        </p>
+      </footer>
     </div>
   );
 }

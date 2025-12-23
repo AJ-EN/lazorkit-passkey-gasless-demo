@@ -1,36 +1,174 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LazorKit Demo
 
-## Getting Started
+A starter template demonstrating **passkey authentication** and **gasless transactions** on Solana using the [LazorKit SDK](https://lazorkit.com).
 
-First, run the development server:
+> 🔐 No seed phrases. No browser extensions. Just your fingerprint.
+
+---
+
+## ✨ Features
+
+- **Passkey Authentication** — Create and access wallets using FaceID, TouchID, or Windows Hello
+- **Gasless Transactions** — Send SOL without needing to hold any for gas fees
+- **Smart Wallet** — Programmable account abstraction via PDAs
+- **Session Persistence** — Stay connected across page refreshes
+
+---
+
+## 🚀 Quick Start
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/YOUR_USERNAME/lazorkit-demo.git
+cd lazorkit-demo
+npm install
+```
+
+### 2. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Open in Browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Navigate to [http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Connect with Passkey
 
-## Learn More
+Click **"Connect with Passkey"** and follow your device's biometric prompt.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📦 Dependencies
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Package | Purpose |
+|---------|---------|
+| `@lazorkit/wallet` | Core SDK — Provider, hooks, and Paymaster integration |
+| `@coral-xyz/anchor` | Peer dependency for Solana program interactions |
+| `@solana/web3.js` | Solana transactions and PublicKey utilities |
+| `buffer` | Polyfill for Next.js browser compatibility |
+| `zustand` | State management (peer dependency) |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📁 Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+lazorkit-demo/
+├── src/
+│   ├── app/
+│   │   ├── providers.tsx    # LazorkitProvider setup + Buffer polyfill
+│   │   ├── layout.tsx       # Root layout with Providers wrapper
+│   │   ├── page.tsx         # Main demo page
+│   │   └── globals.css      # Minimal Solana-themed styling
+│   └── components/
+│       ├── connect-wallet.tsx   # Passkey wallet connect/disconnect
+│       ├── send-tokens.tsx      # SOL transfer with gasless TX
+│       └── sign-message.tsx     # Message signing (advanced)
+├── docs/
+│   ├── 01-passkey-wallet-creation.md   # Tutorial 1
+│   ├── 02-gasless-transactions.md      # Tutorial 2
+│   └── 03-session-persistence.md       # Tutorial 3
+├── README.md
+└── package.json
+```
+
+---
+
+## 🔧 Configuration
+
+The SDK is pre-configured for **Solana Devnet**. See `src/app/providers.tsx`:
+
+```typescript
+const LAZORKIT_CONFIG = {
+  rpcUrl: "https://api.devnet.solana.com",
+  portalUrl: "https://portal.lazor.sh",
+  paymasterConfig: {
+    paymasterUrl: "https://kora.devnet.lazorkit.com",
+  },
+};
+```
+
+### Switching to Mainnet
+
+To deploy on Mainnet, update the config:
+
+```typescript
+const LAZORKIT_CONFIG = {
+  rpcUrl: "https://api.mainnet-beta.solana.com",
+  portalUrl: "https://portal.lazor.sh",
+  paymasterConfig: {
+    paymasterUrl: "https://kora.mainnet.lazorkit.com",
+  },
+};
+```
+
+---
+
+## 📚 Tutorials
+
+Step-by-step guides to understanding the implementation:
+
+1. **[Passkey Wallet Creation](docs/01-passkey-wallet-creation.md)** — How WebAuthn passkeys replace seed phrases
+2. **[Gasless Transactions](docs/02-gasless-transactions.md)** — How the Paymaster covers gas fees
+3. **[Session Persistence](docs/03-session-persistence.md)** — How sessions work across refreshes and devices
+
+---
+
+## 🧪 Testing
+
+### Airdrop Devnet SOL
+
+Your smart wallet needs SOL to receive transfers. Request Devnet SOL:
+
+```bash
+solana airdrop 1 YOUR_SMART_WALLET_ADDRESS --url devnet
+```
+
+Or use the [Solana Faucet](https://faucet.solana.com/).
+
+### Manual Testing Checklist
+
+- [ ] Create new passkey wallet (first-time user)
+- [ ] Restore session on page refresh
+- [ ] Send 0.001 SOL to another address
+- [ ] View transaction on Solana Explorer
+- [ ] Sign an arbitrary message
+
+---
+
+## 🌐 Deployment
+
+Deploy to Vercel with one click:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/YOUR_USERNAME/lazorkit-demo)
+
+### Manual Deployment
+
+```bash
+npm run build
+npm run start
+```
+
+---
+
+## 🔗 Resources
+
+- [LazorKit Documentation](https://docs.lazorkit.com/)
+- [LazorKit GitHub](https://github.com/lazor-kit/lazor-kit)
+- [LazorKit Telegram](https://t.me/lazorkit)
+- [Solana Developer Docs](https://solana.com/docs)
+
+---
+
+## 📄 License
+
+MIT License — feel free to use this template for your own projects!
+
+---
+
+## 🙏 Acknowledgments
+
+Built with [LazorKit](https://lazorkit.com) — the open-source passkey wallet infrastructure for Solana.
