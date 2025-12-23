@@ -56,11 +56,12 @@ if (typeof window !== "undefined") {
   window.Buffer = window.Buffer || require("buffer").Buffer;
 }
 
+// Configuration uses environment variables with sensible defaults
 const CONFIG = {
-  rpcUrl: "https://api.devnet.solana.com",
-  portalUrl: "https://portal.lazor.sh",
+  rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC || "https://api.devnet.solana.com",
+  portalUrl: process.env.NEXT_PUBLIC_LAZORKIT_PORTAL || "https://portal.lazor.sh",
   paymasterConfig: {
-    paymasterUrl: "https://kora.devnet.lazorkit.com",
+    paymasterUrl: process.env.NEXT_PUBLIC_LAZORKIT_PAYMASTER || "https://kora.devnet.lazorkit.com",
   },
 };
 

@@ -45,10 +45,10 @@ The Paymaster is configured in your provider:
 ```tsx
 // src/app/providers.tsx
 const CONFIG = {
-  rpcUrl: "https://api.devnet.solana.com",
-  portalUrl: "https://portal.lazor.sh",
+  rpcUrl: process.env.NEXT_PUBLIC_SOLANA_RPC || "https://api.devnet.solana.com",
+  portalUrl: process.env.NEXT_PUBLIC_LAZORKIT_PORTAL || "https://portal.lazor.sh",
   paymasterConfig: {
-    paymasterUrl: "https://kora.devnet.lazorkit.com", // ← Paymaster endpoint
+    paymasterUrl: process.env.NEXT_PUBLIC_LAZORKIT_PAYMASTER || "https://kora.devnet.lazorkit.com",
   },
 };
 ```
