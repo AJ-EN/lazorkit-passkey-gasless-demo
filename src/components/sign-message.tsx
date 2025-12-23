@@ -1,6 +1,6 @@
 "use client";
 
-import { useWallet } from "@lazorkit/wallet";
+import { useTypedWallet } from "@/hooks/useTypedWallet";
 import { useState } from "react";
 
 /**
@@ -15,10 +15,7 @@ import { useState } from "react";
  * ```
  */
 export function SignMessage() {
-    // Type assertion needed - signMessage exists at runtime but types are incomplete
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wallet = useWallet() as any;
-    const { signMessage, isConnected } = wallet;
+    const { signMessage, isConnected } = useTypedWallet();
 
     const [message, setMessage] = useState("");
     const [signature, setSignature] = useState<string | null>(null);
@@ -43,12 +40,11 @@ export function SignMessage() {
             // Convert message to Uint8Array
             const messageBytes = new TextEncoder().encode(message);
 
-            // Sign with passkey
-            const sig = await signMessage(messageBytes);
+            // Sign with passkey - returns { signature, signedPayload }
+            const result = await signMessage(messageBytes);
 
-            // Convert signature to base58 or hex for display
-            const signatureHex = Buffer.from(sig).toString("hex");
-            setSignature(signatureHex);
+            // Use the signature string directly from the result
+            setSignature(result.signature);
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "Failed to sign message";
             setError(errorMessage);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useWallet } from "@lazorkit/wallet";
+import { useTypedWallet } from "@/hooks/useTypedWallet";
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL, TransactionInstruction } from "@solana/web3.js";
 import {
     getAssociatedTokenAddress,
@@ -35,7 +35,7 @@ type TransactionStatus = "idle" | "pending" | "success" | "error";
  * ```
  */
 export function SendTokens() {
-    const { signAndSendTransaction, smartWalletPubkey, isConnected } = useWallet();
+    const { signAndSendTransaction, smartWalletPubkey, isConnected } = useTypedWallet();
 
     // Form state
     const [token, setToken] = useState<TokenType>("SOL");
@@ -103,11 +103,9 @@ export function SendTokens() {
                 });
 
                 // Sign and send via Paymaster (gasless)
-                // Note: Type assertion needed due to SDK type definition mismatch
                 const txSignature = await signAndSendTransaction({
                     instructions: [instruction],
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                } as any);
+                });
 
                 setSignature(txSignature);
                 setStatus("success");
@@ -157,11 +155,9 @@ export function SendTokens() {
                 instructions.push(transferInstruction);
 
                 // Sign and send via Paymaster (gasless)
-                // Note: Type assertion needed due to SDK type definition mismatch
                 const txSignature = await signAndSendTransaction({
                     instructions,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                } as any);
+                });
 
                 setSignature(txSignature);
                 setStatus("success");
