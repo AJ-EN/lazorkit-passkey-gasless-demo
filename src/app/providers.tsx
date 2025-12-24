@@ -2,6 +2,7 @@
 
 import { LazorkitProvider } from "@lazorkit/wallet";
 import { ReactNode } from "react";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 // Polyfill Buffer for Next.js (required by Solana libraries)
 if (typeof window !== "undefined") {
@@ -37,6 +38,7 @@ interface ProvidersProps {
  * This component:
  * 1. Polyfills Buffer for browser compatibility
  * 2. Wraps the app with LazorkitProvider for passkey + gasless transactions
+ * 3. Wraps with ErrorBoundary for graceful error handling
  * 
  * @example
  * ```tsx
@@ -47,12 +49,14 @@ interface ProvidersProps {
  */
 export function Providers({ children }: ProvidersProps) {
     return (
-        <LazorkitProvider
-            rpcUrl={LAZORKIT_CONFIG.rpcUrl}
-            portalUrl={LAZORKIT_CONFIG.portalUrl}
-            paymasterConfig={LAZORKIT_CONFIG.paymasterConfig}
-        >
-            {children}
-        </LazorkitProvider>
+        <ErrorBoundary>
+            <LazorkitProvider
+                rpcUrl={LAZORKIT_CONFIG.rpcUrl}
+                portalUrl={LAZORKIT_CONFIG.portalUrl}
+                paymasterConfig={LAZORKIT_CONFIG.paymasterConfig}
+            >
+                {children}
+            </LazorkitProvider>
+        </ErrorBoundary>
     );
 }

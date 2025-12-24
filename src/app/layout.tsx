@@ -17,6 +17,16 @@ export const metadata: Metadata = {
   title: "LazorKit Demo | Passkey Smart Wallet for Solana",
   description: "A starter template demonstrating passkey authentication and gasless transactions on Solana using LazorKit SDK.",
   keywords: ["Solana", "Passkey", "WebAuthn", "Smart Wallet", "LazorKit", "Gasless"],
+  openGraph: {
+    title: "LazorKit Demo | Passkey Smart Wallet",
+    description: "No seed phrases. No extensions. Just your fingerprint.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LazorKit Demo | Passkey Smart Wallet",
+    description: "No seed phrases. No extensions. Just your fingerprint.",
+  },
 };
 
 export default function RootLayout({

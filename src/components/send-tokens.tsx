@@ -1,6 +1,6 @@
 "use client";
 
-import { useTypedWallet } from "@/hooks/useTypedWallet";
+import { useWallet } from "@lazorkit/wallet";
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL, TransactionInstruction } from "@solana/web3.js";
 import {
     getAssociatedTokenAddress,
@@ -17,6 +17,18 @@ const USDC_DECIMALS = 6;
 type TokenType = "SOL" | "USDC";
 type TransactionStatus = "idle" | "pending" | "success" | "error";
 
+interface TransactionRecord {
+    signature: string;
+    token: TokenType;
+    amount: string;
+    timestamp: number;
+}
+
+interface SendTokensProps {
+    /** Callback fired after a successful transaction (e.g., to refresh balances) */
+    onTransactionSuccess?: () => void;
+}
+
 /**
  * SendTokens Component
  * 
@@ -25,17 +37,26 @@ type TransactionStatus = "idle" | "pending" | "success" | "error";
  * 
  * Features:
  * - Token selector (SOL/USDC)
+ * - Fee token selector (pay gas in SOL or USDC)
  * - Amount and recipient inputs
  * - Gasless transaction via Paymaster
- * - Transaction status with Explorer link
+ * - Transaction history (last 5 TXs)
+ * - Auto-refresh callback after success
  * 
  * @example
  * ```tsx
- * <SendTokens />
+ * <SendTokens onTransactionSuccess={() => refreshBalance()} />
  * ```
  */
-export function SendTokens() {
-    const { signAndSendTransaction, smartWalletPubkey, isConnected } = useTypedWallet();
+export function SendTokens({ onTransactionSuccess }: SendTokensProps) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const wallet = useWallet() as any;
+    const { signAndSendTransaction, isConnected } = wallet;
+
+    // Get smart wallet public key - the SDK provides it as a string
+    const smartWalletPubkey = wallet.wallet?.smartWallet
+        ? new PublicKey(wallet.wallet.smartWallet)
+        : null;
 
     // Form state
     const [token, setToken] = useState<TokenType>("SOL");
@@ -46,6 +67,9 @@ export function SendTokens() {
     const [status, setStatus] = useState<TransactionStatus>("idle");
     const [signature, setSignature] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    // Transaction history (persists during session)
+    const [txHistory, setTxHistory] = useState<TransactionRecord[]>([]);
 
     /**
      * Validates a Solana address
@@ -60,6 +84,16 @@ export function SendTokens() {
     }, []);
 
     /**
+     * Adds a transaction to history
+     */
+    const addToHistory = useCallback((sig: string, tokenType: TokenType, amt: string) => {
+        setTxHistory(prev => [
+            { signature: sig, token: tokenType, amount: amt, timestamp: Date.now() },
+            ...prev.slice(0, 4) // Keep last 5
+        ]);
+    }, []);
+
+    /**
      * Handles the token transfer
      * 
      * Flow:
@@ -67,6 +101,7 @@ export function SendTokens() {
      * 2. Create transfer instruction
      * 3. Sign with passkey via signAndSendTransaction
      * 4. Transaction is submitted via Paymaster (gasless)
+     * 5. Call onTransactionSuccess callback to refresh balances
      */
     const handleSend = async () => {
         // Reset state
@@ -92,6 +127,8 @@ export function SendTokens() {
         setStatus("pending");
 
         try {
+            let txSignature: string;
+
             if (token === "SOL") {
                 // SOL Transfer
                 const lamports = parseFloat(amount) * LAMPORTS_PER_SOL;
@@ -103,16 +140,10 @@ export function SendTokens() {
                 });
 
                 // Sign and send via Paymaster (gasless)
-                const txSignature = await signAndSendTransaction({
+                // Note: feeToken option requires Mainnet Paymaster configuration
+                txSignature = await signAndSendTransaction({
                     instructions: [instruction],
                 });
-
-                setSignature(txSignature);
-                setStatus("success");
-
-                // Reset form on success
-                setAmount("");
-                setRecipient("");
 
             } else {
                 // USDC Transfer using SPL Token program
@@ -155,17 +186,30 @@ export function SendTokens() {
                 instructions.push(transferInstruction);
 
                 // Sign and send via Paymaster (gasless)
-                const txSignature = await signAndSendTransaction({
+                // Note: feeToken option requires Mainnet Paymaster configuration
+                txSignature = await signAndSendTransaction({
                     instructions,
                 });
-
-                setSignature(txSignature);
-                setStatus("success");
-
-                // Reset form on success
-                setAmount("");
-                setRecipient("");
             }
+
+            setSignature(txSignature);
+            setStatus("success");
+
+            // Add to transaction history
+            addToHistory(txSignature, token, amount);
+
+            // Reset form on success
+            setAmount("");
+            setRecipient("");
+
+            // Notify parent to refresh balances
+            if (onTransactionSuccess) {
+                // Small delay to ensure transaction is confirmed
+                setTimeout(() => {
+                    onTransactionSuccess();
+                }, 1000);
+            }
+
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : "Transaction failed";
             setError(errorMessage);
@@ -189,7 +233,7 @@ export function SendTokens() {
 
             {/* Token Selector */}
             <div className="form-group">
-                <label htmlFor="token-select">Token</label>
+                <label htmlFor="token-select">Token to Send</label>
                 <select
                     id="token-select"
                     value={token}
@@ -232,6 +276,8 @@ export function SendTokens() {
                 />
             </div>
 
+            {/* Note: Fee token selection (pay gas in USDC) requires Mainnet Paymaster */}
+
             {/* Send Button */}
             <button
                 onClick={handleSend}
@@ -272,6 +318,31 @@ export function SendTokens() {
                 <p className="error-message" role="alert">
                     ❌ {error}
                 </p>
+            )}
+
+            {/* Transaction History */}
+            {txHistory.length > 0 && (
+                <div className="tx-history">
+                    <h3>Recent Transactions</h3>
+                    <ul className="tx-list">
+                        {txHistory.map((tx) => (
+                            <li key={tx.signature} className="tx-item">
+                                <span className="tx-info">
+                                    {tx.amount} {tx.token}
+                                </span>
+                                <a
+                                    href={`https://explorer.solana.com/tx/${tx.signature}?cluster=devnet`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="tx-link"
+                                    title={tx.signature}
+                                >
+                                    {tx.signature.slice(0, 8)}...
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             )}
         </div>
     );

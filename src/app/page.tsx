@@ -92,13 +92,25 @@ export default function Home() {
                 <div className="balance-row">
                   <span className="balance-label">SOL Balance:</span>
                   <span className="balance-value">
-                    {balanceLoading ? "..." : solBalance !== null ? `${solBalance.toFixed(4)} SOL` : "--"}
+                    {balanceLoading ? (
+                      <span className="skeleton-text">Loading...</span>
+                    ) : solBalance !== null ? (
+                      `${solBalance.toFixed(4)} SOL`
+                    ) : (
+                      "--"
+                    )}
                   </span>
                 </div>
                 <div className="balance-row">
                   <span className="balance-label">USDC Balance:</span>
                   <span className="balance-value usdc">
-                    {balanceLoading ? "..." : usdcBalance !== null ? `${usdcBalance.toFixed(2)} USDC` : "--"}
+                    {balanceLoading ? (
+                      <span className="skeleton-text">Loading...</span>
+                    ) : usdcBalance !== null ? (
+                      `${usdcBalance.toFixed(2)} USDC`
+                    ) : (
+                      "--"
+                    )}
                   </span>
                 </div>
                 <button
@@ -111,6 +123,29 @@ export default function Home() {
                 </button>
               </div>
 
+              {/* Faucet Links - Help users get test tokens */}
+              <div className="faucet-links">
+                <span className="faucet-label">Need test tokens?</span>
+                <div className="faucet-buttons">
+                  <a
+                    href="https://faucet.solana.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="faucet-link"
+                  >
+                    🪙 Get Devnet SOL
+                  </a>
+                  <a
+                    href="https://faucet.circle.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="faucet-link"
+                  >
+                    💵 Get Devnet USDC
+                  </a>
+                </div>
+              </div>
+
               <a
                 href={`https://explorer.solana.com/address/${wallet.smartWallet}?cluster=devnet`}
                 target="_blank"
@@ -121,9 +156,9 @@ export default function Home() {
               </a>
             </section>
 
-            {/* Send Tokens Card */}
+            {/* Send Tokens Card - with auto-refresh callback */}
             <section className="card">
-              <SendTokens />
+              <SendTokens onTransactionSuccess={refreshBalance} />
             </section>
 
             {/* Sign Message (Advanced) */}
@@ -146,13 +181,22 @@ export default function Home() {
               <div className="step">
                 <span className="step-number">2</span>
                 <h3>Send Gasless Transactions</h3>
-                <p>Transfer SOL without needing to hold any for gas fees.</p>
+                <p>Transfer SOL or USDC without needing to hold any tokens for gas fees.</p>
               </div>
               <div className="step">
                 <span className="step-number">3</span>
                 <h3>Session Persists</h3>
                 <p>Your session is saved. Come back anytime without re-authenticating.</p>
               </div>
+            </div>
+
+            {/* Getting Started Tip */}
+            <div className="getting-started-tip">
+              <h3>💡 First time here?</h3>
+              <p>
+                After connecting, you&apos;ll need Devnet tokens to test transfers.
+                Use the faucet links in your wallet card to get free test tokens!
+              </p>
             </div>
           </section>
         )}

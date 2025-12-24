@@ -620,4 +620,295 @@ select.input {
   .wallet-info {
     align-items: center;
   }
+
+  .faucet-buttons {
+    flex-direction: column;
+  }
+}
+
+/* ========================================
+   Transaction History
+   ======================================== */
+
+.tx-history {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--card-border);
+}
+
+.tx-history h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+
+.tx-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tx-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.tx-item:last-child {
+  border-bottom: none;
+}
+
+.tx-info {
+  font-size: 0.875rem;
+  color: var(--foreground);
+}
+
+.tx-link {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--solana-purple);
+  text-decoration: none;
+}
+
+.tx-link:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   Faucet Links
+   ======================================== */
+
+.faucet-links {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(20, 241, 149, 0.05);
+  border: 1px solid rgba(20, 241, 149, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.faucet-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.faucet-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.faucet-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.faucet-link:hover {
+  border-color: var(--solana-green);
+  background: rgba(20, 241, 149, 0.1);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   Fee Token Selector
+   ======================================== */
+
+.fee-token-group {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--card-border);
+}
+
+.fee-token-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.input-small {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* ========================================
+   Getting Started Tip
+   ======================================== */
+
+.getting-started-tip {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(153, 69, 255, 0.1), rgba(20, 241, 149, 0.1));
+  border: 1px solid rgba(153, 69, 255, 0.2);
+  border-radius: 12px;
+  text-align: left;
+}
+
+.getting-started-tip h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.getting-started-tip p {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ========================================
+   Error Boundary
+   ======================================== */
+
+.error-boundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--background);
+}
+
+.error-boundary-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.error-boundary-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.error-boundary-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-boundary-message {
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.error-boundary-details {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  padding: 1rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+}
+
+.error-boundary-details summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-boundary-details code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--error);
+  word-break: break-all;
+}
+
+/* ========================================
+   Skeleton Loading Animation
+   ======================================== */
+
+.skeleton-text {
+  display: inline-block;
+  background: linear-gradient(90deg, var(--card-border) 25%, var(--card-bg) 50%, var(--card-border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  color: transparent;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================================
+   Enhanced Button Hover Effects
+   ======================================== */
+
+.btn-primary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s;
+}
+
+.btn-primary:hover:not(:disabled)::after {
+  width: 300px;
+  height: 300px;
+}
+
+/* ========================================
+   Card Entry Animation
+   ======================================== */
+
+.card {
+  animation: cardEntry 0.4s ease-out;
+}
+
+@keyframes cardEntry {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
