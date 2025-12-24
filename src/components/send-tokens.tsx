@@ -142,15 +142,19 @@ export function SendTokens({ onTransactionSuccess }: SendTokensProps) {
                 const recipientPubkey = new PublicKey(recipient);
 
                 // Get the sender's Associated Token Account (ATA)
+                // allowOwnerOffCurve: true is required because LazorKit smart wallets are PDAs
                 const sourceAccount = await getAssociatedTokenAddress(
                     USDC_MINT,
-                    smartWalletPubkey
+                    smartWalletPubkey,
+                    true // allowOwnerOffCurve - required for PDA wallets
                 );
 
                 // Get the recipient's Associated Token Account (ATA)
+                // allowOwnerOffCurve: true allows sending to both regular wallets and PDAs
                 const destinationAccount = await getAssociatedTokenAddress(
                     USDC_MINT,
-                    recipientPubkey
+                    recipientPubkey,
+                    true // allowOwnerOffCurve - supports both regular and PDA recipients
                 );
 
                 // Create instructions array
