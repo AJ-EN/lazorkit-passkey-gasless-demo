@@ -80,16 +80,6 @@ export function useTypedWallet(): TypedWalletHook {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const walletHook = useLazorKitWallet() as any;
 
-    // Debug: Log to see what the SDK actually returns
-    if (typeof window !== 'undefined' && walletHook.isConnected) {
-        console.log('[useTypedWallet] SDK returns:', {
-            isConnected: walletHook.isConnected,
-            wallet: walletHook.wallet,
-            hasSmartWalletPubkey: 'smartWalletPubkey' in walletHook,
-            smartWalletPubkey: walletHook.smartWalletPubkey,
-        });
-    }
-
     // Extract values before useMemo to help React Compiler understand dependencies
     const sdkSmartWalletPubkey = walletHook.smartWalletPubkey;
     const smartWalletAddress = walletHook.wallet?.smartWallet;

@@ -132,22 +132,6 @@ export function SendTokens({ onTransactionSuccess }: SendTokensProps) {
                     lamports: Math.floor(lamports),
                 });
 
-                // Debug: Log instruction data to diagnose undefined values
-                console.log('[SendTokens] SOL Transfer Debug:', {
-                    smartWalletPubkey: smartWalletPubkey?.toBase58(),
-                    recipient,
-                    lamports: Math.floor(lamports),
-                    instruction: {
-                        programId: instruction.programId?.toBase58(),
-                        keys: instruction.keys?.map(k => ({
-                            pubkey: k.pubkey?.toBase58(),
-                            isSigner: k.isSigner,
-                            isWritable: k.isWritable
-                        })),
-                        dataLength: instruction.data?.length
-                    }
-                });
-
                 // Sign and send via Paymaster (gasless)
                 txSignature = await signAndSendTransaction({
                     instructions: [instruction],
