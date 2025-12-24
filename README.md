@@ -16,9 +16,11 @@ A production-ready starter template demonstrating **passkey authentication** and
 
 ## 📸 Demo Preview
 
-| Connect with Passkey | Send Tokens (Gasless) |
-|:---:|:---:|
-| ![Connect Wallet](src/images/image1.png) | ![Send Tokens](src/images/image2.png) |
+<p align="center">
+  <img src="src/images/gif/Lazorkit.gif" alt="LazorKit Demo - Passkey Authentication and Gasless Transactions" width="800">
+</p>
+
+*Complete flow: Passkey authentication → Smart wallet creation → Gasless SOL transfer*
 
 ---
 
