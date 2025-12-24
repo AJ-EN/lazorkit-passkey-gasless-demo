@@ -1,6 +1,6 @@
 "use client";
 
-import { useWallet } from "@lazorkit/wallet";
+import { useTypedWallet } from "@/hooks/useTypedWallet";
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL, TransactionInstruction } from "@solana/web3.js";
 import {
     getAssociatedTokenAddress,
@@ -49,14 +49,7 @@ interface SendTokensProps {
  * ```
  */
 export function SendTokens({ onTransactionSuccess }: SendTokensProps) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wallet = useWallet() as any;
-    const { signAndSendTransaction, isConnected } = wallet;
-
-    // Get smart wallet public key - the SDK provides it as a string
-    const smartWalletPubkey = wallet.wallet?.smartWallet
-        ? new PublicKey(wallet.wallet.smartWallet)
-        : null;
+    const { signAndSendTransaction, isConnected, smartWalletPubkey } = useTypedWallet();
 
     // Form state
     const [token, setToken] = useState<TokenType>("SOL");
@@ -139,8 +132,23 @@ export function SendTokens({ onTransactionSuccess }: SendTokensProps) {
                     lamports: Math.floor(lamports),
                 });
 
+                // Debug: Log instruction data to diagnose undefined values
+                console.log('[SendTokens] SOL Transfer Debug:', {
+                    smartWalletPubkey: smartWalletPubkey?.toBase58(),
+                    recipient,
+                    lamports: Math.floor(lamports),
+                    instruction: {
+                        programId: instruction.programId?.toBase58(),
+                        keys: instruction.keys?.map(k => ({
+                            pubkey: k.pubkey?.toBase58(),
+                            isSigner: k.isSigner,
+                            isWritable: k.isWritable
+                        })),
+                        dataLength: instruction.data?.length
+                    }
+                });
+
                 // Sign and send via Paymaster (gasless)
-                // Note: feeToken option requires Mainnet Paymaster configuration
                 txSignature = await signAndSendTransaction({
                     instructions: [instruction],
                 });
@@ -186,7 +194,6 @@ export function SendTokens({ onTransactionSuccess }: SendTokensProps) {
                 instructions.push(transferInstruction);
 
                 // Sign and send via Paymaster (gasless)
-                // Note: feeToken option requires Mainnet Paymaster configuration
                 txSignature = await signAndSendTransaction({
                     instructions,
                 });

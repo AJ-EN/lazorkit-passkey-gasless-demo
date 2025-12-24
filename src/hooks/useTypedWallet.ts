@@ -10,6 +10,7 @@
 
 import { useWallet as useLazorKitWallet } from "@lazorkit/wallet";
 import { TransactionInstruction, AddressLookupTableAccount, PublicKey } from "@solana/web3.js";
+import { useMemo } from "react";
 
 /**
  * Payload for signAndSendTransaction
@@ -76,6 +77,44 @@ export interface TypedWalletHook {
  */
 export function useTypedWallet(): TypedWalletHook {
     // The SDK's hook has all the methods at runtime, but TypeScript types are incomplete
-    // We cast to unknown first, then to our properly typed interface
-    return useLazorKitWallet() as unknown as TypedWalletHook;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const walletHook = useLazorKitWallet() as any;
+
+    // Debug: Log to see what the SDK actually returns
+    if (typeof window !== 'undefined' && walletHook.isConnected) {
+        console.log('[useTypedWallet] SDK returns:', {
+            isConnected: walletHook.isConnected,
+            wallet: walletHook.wallet,
+            hasSmartWalletPubkey: 'smartWalletPubkey' in walletHook,
+            smartWalletPubkey: walletHook.smartWalletPubkey,
+        });
+    }
+
+    // Extract values before useMemo to help React Compiler understand dependencies
+    const sdkSmartWalletPubkey = walletHook.smartWalletPubkey;
+    const smartWalletAddress = walletHook.wallet?.smartWallet;
+
+    // Derive smartWalletPubkey from wallet.smartWallet if the SDK doesn't provide it directly
+    const smartWalletPubkey = useMemo(() => {
+        // First check if SDK provides it directly
+        if (sdkSmartWalletPubkey) {
+            return sdkSmartWalletPubkey;
+        }
+        // Otherwise derive from wallet.smartWallet string
+        if (smartWalletAddress) {
+            try {
+                return new PublicKey(smartWalletAddress);
+            } catch (e) {
+                console.error('[useTypedWallet] Failed to parse smartWallet:', e);
+                return null;
+            }
+        }
+        return null;
+    }, [sdkSmartWalletPubkey, smartWalletAddress]);
+
+    return {
+        ...walletHook,
+        smartWalletPubkey,
+    };
 }
+
